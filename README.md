@@ -78,6 +78,17 @@ Supabase migration dosyasi su tablolari ve RLS policy'lerini icerir:
 - `meal_plan_items`
 - `weekly_checkins`
 
+## Admin paneli
+
+Admin rolu kayit ekraninda gosterilmez. Alpha surumde ilk admin hesabi icin tarayici localStorage verisindeki ilgili kullanicinin `role` alani `admin` yapilir. Production surumde admin yetkisi sadece Supabase SQL editor veya guvenli backend tarafindan verilmelidir.
+
+Admin paneli:
+
+- `/admin` route'u sadece `role = admin` icin acilir.
+- Normal kullanici ve diyetisyen admin route'una erisemez.
+- Admin menusu sadece admin oturumunda gorunur.
+- Admin kullanici rollerini gorebilir ve degistirebilir.
+
 ## GitHub Pages alpha yayin
 
 1. GitHub'da yeni bir repo olustur.

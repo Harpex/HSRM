@@ -51,6 +51,14 @@ const reducer = (state: AppState, action: AppAction): AppState => {
       return { ...state, isAuthenticated: false, currentUserId: null };
     case "UPDATE_PROFILE":
       return { ...state, profile: { ...state.profile, ...action.payload } };
+    case "UPDATE_USER_ROLE":
+      return {
+        ...state,
+        users: state.users.map((user) => (user.id === action.payload.userId ? { ...user, role: action.payload.role } : user)),
+        healthProfiles: state.healthProfiles.map((profile) =>
+          profile.userId === action.payload.userId ? { ...profile, role: action.payload.role, updatedAt: new Date().toISOString() } : profile,
+        ),
+      };
     case "UPSERT_HEALTH_PROFILE": {
       const exists = state.healthProfiles.some((profile) => profile.userId === action.payload.userId);
       return {

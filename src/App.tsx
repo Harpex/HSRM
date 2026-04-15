@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Layout } from "./components/Layout";
+import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { Calories } from "./pages/Calories";
 import { Dashboard } from "./pages/Dashboard";
 import { DietitianCheckins } from "./pages/dietitian/DietitianCheckins";
@@ -24,6 +25,10 @@ const Protected = () => {
   const location = useLocation();
   if (!state.isAuthenticated) return <Navigate to="/login" replace />;
   const currentUser = state.users.find((user) => user.id === state.currentUserId);
+  if (currentUser?.role === "admin") {
+    if (!location.pathname.startsWith("/admin")) return <Navigate to="/admin" replace />;
+    return <Layout />;
+  }
   if (currentUser?.role === "dietitian") {
     if (!location.pathname.startsWith("/dietitian")) return <Navigate to="/dietitian" replace />;
     return <Layout />;
@@ -55,6 +60,7 @@ export default function App() {
         <Route path="/dietitian/patients/:patientId" element={<DietitianPatientDetail />} />
         <Route path="/dietitian/plans" element={<DietitianPlans />} />
         <Route path="/dietitian/checkins" element={<DietitianCheckins />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>

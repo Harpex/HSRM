@@ -9,6 +9,7 @@ import {
   LogOut,
   Moon,
   Settings,
+  ShieldCheck,
   Target,
   User,
   UsersRound,
@@ -37,11 +38,15 @@ const dietitianNavItems = [
   { to: "/dietitian", label: "Mesajlar", icon: Activity },
 ];
 
+const adminNavItems = [
+  { to: "/admin", label: "Admin Paneli", icon: ShieldCheck },
+];
+
 export const Layout = () => {
   const { state, dispatch } = useApp();
   const navigate = useNavigate();
   const currentUser = state.users.find((user) => user.id === state.currentUserId);
-  const visibleNavItems = currentUser?.role === "dietitian" ? dietitianNavItems : navItems;
+  const visibleNavItems = currentUser?.role === "admin" ? adminNavItems : currentUser?.role === "dietitian" ? dietitianNavItems : navItems;
 
   const logout = () => {
     dispatch({ type: "LOGOUT" });
@@ -80,11 +85,14 @@ export const Layout = () => {
             <span>Bugün</span>
             <strong>{new Intl.DateTimeFormat("tr-TR", { dateStyle: "full" }).format(new Date())}</strong>
             {currentUser?.role === "dietitian" ? <small>Diyetisyen paneli</small> : null}
+            {currentUser?.role === "admin" ? <small>Admin paneli</small> : null}
           </div>
           <div className="topbar-actions">
-            <NavLink className="icon-link" to="/profile">
-              <Settings size={18} />
-            </NavLink>
+            {currentUser?.role !== "admin" ? (
+              <NavLink className="icon-link" to="/profile">
+                <Settings size={18} />
+              </NavLink>
+            ) : null}
             <button className="ghost-button compact" onClick={logout}>
               <LogOut size={18} />
               Çıkış

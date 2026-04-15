@@ -5,7 +5,7 @@ export type MealCategory = "breakfast" | "lunch" | "dinner" | "snack";
 export type Mood = "dusuk" | "dengeli" | "iyi" | "harika";
 export type ActivityLevel = "cok_dusuk" | "dusuk" | "orta" | "yuksek" | "cok_yuksek";
 export type Gender = "kadin" | "erkek" | "belirtmek_istemiyorum" | "";
-export type UserRole = "user" | "dietitian";
+export type UserRole = "user" | "dietitian" | "admin";
 export type RelationStatus = "active" | "paused";
 export type MealPlanStatus = "active" | "inactive" | "draft";
 
@@ -215,6 +215,7 @@ export type AppAction =
   | { type: "LOGIN_USER"; payload: AuthUser }
   | { type: "LOGOUT" }
   | { type: "UPDATE_PROFILE"; payload: Partial<UserProfile> }
+  | { type: "UPDATE_USER_ROLE"; payload: { userId: string; role: UserRole } }
   | { type: "UPSERT_HEALTH_PROFILE"; payload: UserHealthProfile }
   | { type: "UPSERT_DAILY_LOG"; payload: DailyLog }
   | { type: "ADD_WATER"; payload: { userId: string; date: string; amountMl: number } }

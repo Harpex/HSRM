@@ -7,7 +7,7 @@ create extension if not exists pgcrypto;
 create table if not exists public.profiles (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null unique references auth.users(id) on delete cascade,
-  role text not null default 'user' check (role in ('user', 'dietitian')),
+  role text not null default 'user' check (role in ('user', 'dietitian', 'admin')),
   username text not null unique check (username ~ '^[a-zA-Z0-9_]{3,24}$'),
   full_name text not null default '',
   email text not null unique,
@@ -163,14 +163,14 @@ alter table public.meal_plan_items enable row level security;
 alter table public.weekly_checkins enable row level security;
 
 create policy "Own profile or assigned patient profile select" on public.profiles
-  for select using (auth.uid() = user_id or public.is_dietitian_for(user_id));
+  for select using (auth.uid() = user_id or public.is_dietitian_for(user_id) or public.current_user_role() = 'admin');
 create policy "Users insert own profile" on public.profiles
   for insert with check (auth.uid() = user_id);
 create policy "Users update own profile" on public.profiles
   for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 create policy "Own logs or assigned patient logs select" on public.daily_logs
-  for select using (auth.uid() = user_id or public.is_dietitian_for(user_id));
+  for select using (auth.uid() = user_id or public.is_dietitian_for(user_id) or public.current_user_role() = 'admin');
 create policy "Users insert own logs" on public.daily_logs
   for insert with check (auth.uid() = user_id);
 create policy "Users update own logs" on public.daily_logs
@@ -182,12 +182,18 @@ create policy "Dietitians manage own relations" on public.dietitian_patients
   for all using (auth.uid() = dietitian_user_id and public.current_user_role() = 'dietitian')
   with check (auth.uid() = dietitian_user_id and public.current_user_role() = 'dietitian');
 
+create policy "Admins can read all relations" on public.dietitian_patients
+  for select using (public.current_user_role() = 'admin');
+
 create policy "Dietitians manage own notes" on public.dietitian_notes
   for all using (auth.uid() = dietitian_user_id and public.is_dietitian_for(patient_user_id))
   with check (auth.uid() = dietitian_user_id and public.is_dietitian_for(patient_user_id));
 
+create policy "Admins can read all notes" on public.dietitian_notes
+  for select using (public.current_user_role() = 'admin');
+
 create policy "Patients read assigned active plans" on public.meal_plans
-  for select using (auth.uid() = patient_user_id or auth.uid() = dietitian_user_id);
+  for select using (auth.uid() = patient_user_id or auth.uid() = dietitian_user_id or public.current_user_role() = 'admin');
 create policy "Dietitians manage own plans" on public.meal_plans
   for all using (auth.uid() = dietitian_user_id and public.is_dietitian_for(patient_user_id))
   with check (auth.uid() = dietitian_user_id and public.is_dietitian_for(patient_user_id));
@@ -197,7 +203,7 @@ create policy "Plan items readable through visible plan" on public.meal_plan_ite
     exists (
       select 1 from public.meal_plans mp
       where mp.id = meal_plan_id
-        and (mp.patient_user_id = auth.uid() or mp.dietitian_user_id = auth.uid())
+        and (mp.patient_user_id = auth.uid() or mp.dietitian_user_id = auth.uid() or public.current_user_role() = 'admin')
     )
   );
 create policy "Dietitians manage own plan items" on public.meal_plan_items
@@ -209,7 +215,7 @@ create policy "Dietitians manage own plan items" on public.meal_plan_items
   );
 
 create policy "Patients and dietitians read checkins" on public.weekly_checkins
-  for select using (auth.uid() = patient_user_id or auth.uid() = dietitian_user_id);
+  for select using (auth.uid() = patient_user_id or auth.uid() = dietitian_user_id or public.current_user_role() = 'admin');
 create policy "Dietitians manage own checkins" on public.weekly_checkins
   for all using (auth.uid() = dietitian_user_id and public.is_dietitian_for(patient_user_id))
   with check (auth.uid() = dietitian_user_id and public.is_dietitian_for(patient_user_id));
