@@ -1,5 +1,5 @@
 import { AppState, DietitianPatient, UserHealthProfile } from "../types";
-import { bmiCategory, calculateBmi, getDailyLog, progressPercent } from "./healthCalculations";
+import { bmiCategory, calculateBmi, createEmptyHealthProfile, getDailyLog, progressPercent } from "./healthCalculations";
 import { todayIso } from "./date";
 
 export const getDietitianRelations = (state: AppState, dietitianUserId: string) =>
@@ -10,7 +10,14 @@ export const isDietitianPatient = (state: AppState, dietitianUserId: string, pat
 
 export const getDietitianPatientProfiles = (state: AppState, dietitianUserId: string) => {
   const patientIds = getDietitianRelations(state, dietitianUserId).map((relation) => relation.patientUserId);
-  return state.healthProfiles.filter((profile) => patientIds.includes(profile.userId));
+  return patientIds
+    .map((patientId) => {
+      const profile = state.healthProfiles.find((item) => item.userId === patientId);
+      if (profile) return profile;
+      const user = state.users.find((item) => item.id === patientId);
+      return user ? createEmptyHealthProfile(user.id, user.username, user.email, user.fullName) : null;
+    })
+    .filter((profile): profile is UserHealthProfile => Boolean(profile));
 };
 
 export const patientStatus = (profile: UserHealthProfile, state: AppState) => {

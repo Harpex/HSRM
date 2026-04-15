@@ -4,6 +4,7 @@ import { Search, UserPlus } from "lucide-react";
 import { PageHeader } from "../../components/PageHeader";
 import { ProgressBar } from "../../components/ProgressBar";
 import { useApp } from "../../store/AppContext";
+import { createEmptyHealthProfile } from "../../utils/healthCalculations";
 import { createRelation, getDietitianPatientProfiles, patientSummary } from "../../utils/dietitian";
 
 export const DietitianPatients = () => {
@@ -50,6 +51,12 @@ export const DietitianPatients = () => {
     if (state.dietitianPatients.some((relation) => relation.dietitianUserId === dietitianId && relation.patientUserId === user.id)) {
       setMessage("Bu danışan zaten listende.");
       return;
+    }
+    if (!state.healthProfiles.some((profile) => profile.userId === user.id)) {
+      dispatch({
+        type: "UPSERT_HEALTH_PROFILE",
+        payload: createEmptyHealthProfile(user.id, user.username, user.email, user.fullName),
+      });
     }
     dispatch({ type: "ASSIGN_PATIENT", payload: createRelation(dietitianId, user.id) });
     setInvite("");
