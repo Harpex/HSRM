@@ -22,6 +22,9 @@ export const Dashboard = () => {
   const bmi = healthProfile ? calculateBmi(healthProfile.weightKg, healthProfile.heightCm) : 0;
   const waterProgress = healthProfile ? progressPercent(dailyLog.waterIntakeMl, healthProfile.dailyWaterGoalMl) : 0;
   const stepProgress = healthProfile ? progressPercent(dailyLog.stepsCount, healthProfile.dailyStepGoal) : 0;
+  const activeMealPlan = state.mealPlans.find((plan) => plan.patientUserId === state.currentUserId && plan.status === "active");
+  const activeMealPlanItems = activeMealPlan ? state.mealPlanItems.filter((item) => item.mealPlanId === activeMealPlan.id).sort((a, b) => a.sortOrder - b.sortOrder) : [];
+  const lastCheckin = state.weeklyCheckins.find((checkin) => checkin.patientUserId === state.currentUserId);
 
   if (!healthProfile) return null;
 
@@ -45,6 +48,7 @@ export const Dashboard = () => {
         </div>
         <div className="profile-summary-grid">
           <span>Kullanıcı adı <strong>{healthProfile.username}</strong></span>
+          <span>Ad soyad <strong>{healthProfile.fullName || "-"}</strong></span>
           <span>E-posta <strong>{healthProfile.email}</strong></span>
           <span>Yaş <strong>{healthProfile.age}</strong></span>
           <span>Boy <strong>{healthProfile.heightCm} cm</strong></span>
@@ -75,6 +79,33 @@ export const Dashboard = () => {
           <label>Adım Güncelle<input type="number" min="0" max="150000" value={dailyLog.stepsCount} onChange={(event) => dispatch({ type: "UPSERT_DAILY_LOG", payload: { ...dailyLog, stepsCount: Number(event.target.value), updatedAt: new Date().toISOString() } })} /></label>
           <label>Kilo Güncelle<input type="number" min="20" max="500" step="0.1" value={healthProfile.weightKg} onChange={(event) => dispatch({ type: "UPDATE_WEIGHT", payload: { userId: healthProfile.userId, weightKg: Number(event.target.value), date: todayIso() } })} /></label>
           <span className="form-success">Değişiklikler cihazında kalıcı olarak saklanır.</span>
+        </section>
+      </div>
+      <div className="content-grid">
+        <section className="panel">
+          <div className="section-title"><h2>Aktif Beslenme Planı</h2><span>{activeMealPlan ? "Aktif" : "Plan yok"}</span></div>
+          {activeMealPlan ? (
+            <div className="mini-record">
+              <strong>{activeMealPlan.title}</strong>
+              <p>{activeMealPlan.description}</p>
+              {activeMealPlanItems.map((item) => <span key={item.id}>{item.mealType}: {item.itemText}</span>)}
+            </div>
+          ) : (
+            <p className="analysis-text">Diyetisyenin aktif bir beslenme planı tanımladığında burada görünecek.</p>
+          )}
+        </section>
+        <section className="panel">
+          <div className="section-title"><h2>Son Haftalık Değerlendirme</h2><span>{lastCheckin ? `Uyum %${lastCheckin.adherenceScore}` : "Kayıt yok"}</span></div>
+          {lastCheckin ? (
+            <div className="mini-record">
+              <strong>{lastCheckin.summary}</strong>
+              <p>{lastCheckin.nextGoal}</p>
+              <span>{lastCheckin.waterComment}</span>
+              <span>{lastCheckin.stepsComment}</span>
+            </div>
+          ) : (
+            <p className="analysis-text">Haftalık kontrol oluşturulduğunda özet burada yer alacak.</p>
+          )}
         </section>
       </div>
       <div className="content-grid">

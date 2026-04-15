@@ -13,9 +13,11 @@ export const Login = () => {
   const [loginIdentifier, setLoginIdentifier] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [role, setRole] = useState<"user" | "dietitian">("user");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -36,23 +38,23 @@ export const Login = () => {
     }
 
     dispatch({ type: "LOGIN_USER", payload: result.user });
-    navigate("/dashboard");
+    navigate(result.user.role === "dietitian" ? "/dietitian" : "/dashboard");
   };
 
   const submitRegister = async (event: FormEvent) => {
     event.preventDefault();
     setError("");
-    const validationError = validateRegisterInput({ username, email, password, passwordConfirm }, state.users);
+    const validationError = validateRegisterInput({ username, fullName, email, password, passwordConfirm, role }, state.users);
 
     if (validationError) {
       setError(validationError);
       return;
     }
 
-    const user = await createUser({ username, email, password, passwordConfirm });
+    const user = await createUser({ username, fullName, email, password, passwordConfirm, role });
     dispatch({ type: "REGISTER_USER", payload: user });
-    setSuccess("Hesap oluşturuldu. Profil bilgilerine geçiyorsun.");
-    navigate("/onboarding");
+    setSuccess("Hesap oluşturuldu. Yönlendiriliyorsun.");
+    navigate(user.role === "dietitian" ? "/dietitian" : "/onboarding");
   };
 
   return (
@@ -123,6 +125,22 @@ export const Login = () => {
                 onChange={(event) => setUsername(event.target.value)}
                 placeholder="harpex"
               />
+            </label>
+            <label>
+              Ad Soyad
+              <input
+                autoComplete="name"
+                value={fullName}
+                onChange={(event) => setFullName(event.target.value)}
+                placeholder="Adın ve soyadın"
+              />
+            </label>
+            <label>
+              Hesap türü
+              <select value={role} onChange={(event) => setRole(event.target.value as "user" | "dietitian")}>
+                <option value="user">Normal Kullanıcı</option>
+                <option value="dietitian">Diyetisyen</option>
+              </select>
             </label>
             <label>
               E-posta

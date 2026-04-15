@@ -11,6 +11,7 @@ import {
   Settings,
   Target,
   User,
+  UsersRound,
 } from "lucide-react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useApp } from "../store/AppContext";
@@ -27,9 +28,20 @@ const navItems = [
   { to: "/profile", label: "Profil", icon: User },
 ];
 
+const dietitianNavItems = [
+  { to: "/dietitian", label: "Dashboard", icon: Gauge },
+  { to: "/dietitian/patients", label: "Danışanlar", icon: UsersRound },
+  { to: "/dietitian", label: "Takip Özeti", icon: BarChart3 },
+  { to: "/dietitian/plans", label: "Beslenme Planları", icon: Apple },
+  { to: "/dietitian/checkins", label: "Haftalık Kontroller", icon: CalendarDays },
+  { to: "/dietitian", label: "Mesajlar", icon: Activity },
+];
+
 export const Layout = () => {
   const { state, dispatch } = useApp();
   const navigate = useNavigate();
+  const currentUser = state.users.find((user) => user.id === state.currentUserId);
+  const visibleNavItems = currentUser?.role === "dietitian" ? dietitianNavItems : navItems;
 
   const logout = () => {
     dispatch({ type: "LOGOUT" });
@@ -47,7 +59,7 @@ export const Layout = () => {
           </div>
         </div>
         <nav>
-          {navItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const Icon = item.icon;
             return (
               <NavLink key={item.to} to={item.to}>
@@ -67,6 +79,7 @@ export const Layout = () => {
           <div>
             <span>Bugün</span>
             <strong>{new Intl.DateTimeFormat("tr-TR", { dateStyle: "full" }).format(new Date())}</strong>
+            {currentUser?.role === "dietitian" ? <small>Diyetisyen paneli</small> : null}
           </div>
           <div className="topbar-actions">
             <NavLink className="icon-link" to="/profile">

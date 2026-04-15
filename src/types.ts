@@ -5,6 +5,9 @@ export type MealCategory = "breakfast" | "lunch" | "dinner" | "snack";
 export type Mood = "dusuk" | "dengeli" | "iyi" | "harika";
 export type ActivityLevel = "cok_dusuk" | "dusuk" | "orta" | "yuksek" | "cok_yuksek";
 export type Gender = "kadin" | "erkek" | "belirtmek_istemiyorum" | "";
+export type UserRole = "user" | "dietitian";
+export type RelationStatus = "active" | "paused";
+export type MealPlanStatus = "active" | "inactive" | "draft";
 
 export interface Task {
   id: string;
@@ -86,7 +89,9 @@ export interface UserProfile {
 export interface AuthUser {
   id: string;
   username: string;
+  fullName: string;
   email: string;
+  role: UserRole;
   passwordHash: string;
   passwordSalt: string;
   createdAt: string;
@@ -96,7 +101,9 @@ export interface UserHealthProfile {
   id: string;
   userId: string;
   username: string;
+  fullName: string;
   email: string;
+  role: UserRole;
   age: number;
   gender: Gender;
   heightCm: number;
@@ -127,6 +134,62 @@ export interface DailyLog {
   updatedAt: string;
 }
 
+export interface DietitianPatient {
+  id: string;
+  dietitianUserId: string;
+  patientUserId: string;
+  assignedAt: string;
+  status: RelationStatus;
+  internalNote: string;
+}
+
+export interface DietitianNote {
+  id: string;
+  dietitianUserId: string;
+  patientUserId: string;
+  title: string;
+  noteContent: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MealPlan {
+  id: string;
+  dietitianUserId: string;
+  patientUserId: string;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  status: MealPlanStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MealPlanItem {
+  id: string;
+  mealPlanId: string;
+  mealType: string;
+  itemText: string;
+  sortOrder: number;
+}
+
+export interface WeeklyCheckin {
+  id: string;
+  dietitianUserId: string;
+  patientUserId: string;
+  weekStartDate: string;
+  weekEndDate: string;
+  summary: string;
+  weightComment: string;
+  waterComment: string;
+  stepsComment: string;
+  adherenceScore: number;
+  nextGoal: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AppState {
   isAuthenticated: boolean;
   currentUserId: string | null;
@@ -134,6 +197,11 @@ export interface AppState {
   users: AuthUser[];
   healthProfiles: UserHealthProfile[];
   dailyLogs: DailyLog[];
+  dietitianPatients: DietitianPatient[];
+  dietitianNotes: DietitianNote[];
+  mealPlans: MealPlan[];
+  mealPlanItems: MealPlanItem[];
+  weeklyCheckins: WeeklyCheckin[];
   tasks: Task[];
   goals: Goal[];
   meals: Meal[];
@@ -151,6 +219,11 @@ export type AppAction =
   | { type: "UPSERT_DAILY_LOG"; payload: DailyLog }
   | { type: "ADD_WATER"; payload: { userId: string; date: string; amountMl: number } }
   | { type: "UPDATE_WEIGHT"; payload: { userId: string; weightKg: number; date: string } }
+  | { type: "ASSIGN_PATIENT"; payload: DietitianPatient }
+  | { type: "UPSERT_DIETITIAN_NOTE"; payload: DietitianNote }
+  | { type: "DELETE_DIETITIAN_NOTE"; payload: string }
+  | { type: "UPSERT_MEAL_PLAN"; payload: { plan: MealPlan; items: MealPlanItem[] } }
+  | { type: "UPSERT_WEEKLY_CHECKIN"; payload: WeeklyCheckin }
   | { type: "ADD_TASK"; payload: Task }
   | { type: "UPDATE_TASK"; payload: Task }
   | { type: "DELETE_TASK"; payload: string }

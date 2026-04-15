@@ -36,6 +36,7 @@ export const HealthProfileForm = ({ initialProfile, submitLabel, onSubmit }: Hea
         <label>Kullanıcı adı<input value={profile.username} disabled /></label>
         <label>E-posta<input value={profile.email} disabled /></label>
       </div>
+      <label>Ad Soyad<input value={profile.fullName} onChange={(event) => update("fullName", event.target.value)} placeholder="Adın ve soyadın" /></label>
       <div className="three-col">
         <label>Yaş<input type="number" min="10" max="120" value={profile.age} onChange={(event) => update("age", Number(event.target.value))} /></label>
         <label>Cinsiyet<select value={profile.gender} onChange={(event) => update("gender", event.target.value as Gender)}><option value="">Seçim yok</option><option value="kadin">Kadın</option><option value="erkek">Erkek</option><option value="belirtmek_istemiyorum">Belirtmek istemiyorum</option></select></label>

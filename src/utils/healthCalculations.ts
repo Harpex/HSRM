@@ -32,13 +32,15 @@ export const emptyDailyLog = (userId: string, date = todayIso()): DailyLog => {
   };
 };
 
-export const createEmptyHealthProfile = (userId: string, username: string, email: string): UserHealthProfile => {
+export const createEmptyHealthProfile = (userId: string, username: string, email: string, fullName = username): UserHealthProfile => {
   const now = new Date().toISOString();
   return {
     id: crypto.randomUUID(),
     userId,
     username,
+    fullName,
     email,
+    role: "user",
     age: 30,
     gender: "",
     heightCm: 175,

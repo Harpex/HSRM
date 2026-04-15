@@ -19,6 +19,11 @@ export const seedState: AppState = {
   users: [],
   healthProfiles: [],
   dailyLogs: [],
+  dietitianPatients: [],
+  dietitianNotes: [],
+  mealPlans: [],
+  mealPlanItems: [],
+  weeklyCheckins: [],
   tasks: [
     {
       id: "task-1",

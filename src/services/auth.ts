@@ -2,9 +2,11 @@ import { AuthUser } from "../types";
 
 export interface RegisterInput {
   username: string;
+  fullName: string;
   email: string;
   password: string;
   passwordConfirm: string;
+  role: "user" | "dietitian";
 }
 
 export interface LoginInput {
@@ -70,7 +72,9 @@ export const createUser = async (input: RegisterInput): Promise<AuthUser> => {
   return {
     id: crypto.randomUUID(),
     username: input.username.trim(),
+    fullName: input.fullName.trim(),
     email: normalizeEmail(input.email),
+    role: input.role,
     passwordSalt: salt,
     passwordHash: await hashPassword(input.password, salt),
     createdAt: new Date().toISOString(),

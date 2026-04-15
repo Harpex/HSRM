@@ -2,6 +2,11 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { Calories } from "./pages/Calories";
 import { Dashboard } from "./pages/Dashboard";
+import { DietitianCheckins } from "./pages/dietitian/DietitianCheckins";
+import { DietitianDashboard } from "./pages/dietitian/DietitianDashboard";
+import { DietitianPatientDetail } from "./pages/dietitian/DietitianPatientDetail";
+import { DietitianPatients } from "./pages/dietitian/DietitianPatients";
+import { DietitianPlans } from "./pages/dietitian/DietitianPlans";
 import { Goals } from "./pages/Goals";
 import { Habits } from "./pages/Habits";
 import { Health } from "./pages/Health";
@@ -18,6 +23,11 @@ const Protected = () => {
   const { state } = useApp();
   const location = useLocation();
   if (!state.isAuthenticated) return <Navigate to="/login" replace />;
+  const currentUser = state.users.find((user) => user.id === state.currentUserId);
+  if (currentUser?.role === "dietitian") {
+    if (!location.pathname.startsWith("/dietitian")) return <Navigate to="/dietitian" replace />;
+    return <Layout />;
+  }
   const healthProfile = getUserHealthProfile(state.healthProfiles, state.currentUserId);
   if (!healthProfile?.onboardingCompleted && location.pathname !== "/onboarding") {
     return <Navigate to="/onboarding" replace />;
@@ -40,6 +50,11 @@ export default function App() {
         <Route path="/weekly" element={<WeeklyReport />} />
         <Route path="/monthly" element={<MonthlyReport />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/dietitian" element={<DietitianDashboard />} />
+        <Route path="/dietitian/patients" element={<DietitianPatients />} />
+        <Route path="/dietitian/patients/:patientId" element={<DietitianPatientDetail />} />
+        <Route path="/dietitian/plans" element={<DietitianPlans />} />
+        <Route path="/dietitian/checkins" element={<DietitianCheckins />} />
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>

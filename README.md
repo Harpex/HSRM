@@ -53,6 +53,31 @@ Production Supabase entegrasyonu icin:
 3. Frontend tarafinda local auth servisini Supabase `signUp`, `signInWithPassword`, `signOut` ve `onAuthStateChange` akisi ile degistir.
 4. `profiles` ve `daily_logs` sorgularinda `user_id = session.user.id` kullan.
 
+## Diyetisyen rolu
+
+Kayit ekraninda hesap turu `Normal Kullanici` veya `Diyetisyen` olarak secilebilir. Diyetisyen hesabi giris yaptiginda kullanici dashboard'u yerine diyetisyen paneline yonlenir.
+
+Diyetisyen panelinde:
+
+- Dashboard
+- Danisanlar
+- Danisan detayi
+- Danisan notlari
+- Beslenme planlari
+- Haftalik kontroller
+
+bulunur. Alpha surumde danisan eklemek icin once normal kullanici hesabi olusturulur, sonra diyetisyen hesabinda `Danisanlar` ekranindan kullanici adi veya e-posta ile danisan listesine eklenir.
+
+Supabase migration dosyasi su tablolari ve RLS policy'lerini icerir:
+
+- `profiles`
+- `daily_logs`
+- `dietitian_patients`
+- `dietitian_notes`
+- `meal_plans`
+- `meal_plan_items`
+- `weekly_checkins`
+
 ## GitHub Pages alpha yayin
 
 1. GitHub'da yeni bir repo olustur.

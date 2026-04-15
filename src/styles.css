@@ -693,6 +693,58 @@ textarea {
   margin-bottom: 16px;
 }
 
+.client-table {
+  display: grid;
+  gap: 12px;
+}
+
+.client-row,
+.client-card,
+.mini-record {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-strong);
+  padding: 12px;
+}
+
+.client-row {
+  grid-template-columns: 1.1fr 1fr 0.7fr 0.7fr auto;
+  align-items: center;
+}
+
+.client-card {
+  grid-template-columns: 1.2fr 0.55fr 0.9fr 0.6fr 1fr 1fr auto auto;
+  align-items: center;
+}
+
+.client-card p,
+.mini-record p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.client-card > div,
+.mini-record {
+  min-width: 0;
+}
+
+.client-card span,
+.client-row span,
+.mini-record span {
+  color: var(--muted);
+}
+
+.client-status {
+  width: max-content;
+  border-radius: 8px;
+  background: rgba(14, 159, 143, 0.14);
+  color: var(--teal) !important;
+  font-weight: 850;
+  padding: 6px 9px;
+}
+
 .toggle-row {
   grid-template-columns: auto auto 1fr;
   align-items: center;
@@ -748,6 +800,11 @@ textarea {
   }
 
   .task-row {
+    grid-template-columns: 1fr;
+  }
+
+  .client-row,
+  .client-card {
     grid-template-columns: 1fr;
   }
 

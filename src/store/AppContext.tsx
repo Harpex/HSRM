@@ -111,6 +111,46 @@ const reducer = (state: AppState, action: AppAction): AppState => {
         payload: { ...current, weightKgSnapshot: action.payload.weightKg, updatedAt: new Date().toISOString() },
       });
     }
+    case "ASSIGN_PATIENT": {
+      const exists = state.dietitianPatients.some(
+        (item) => item.dietitianUserId === action.payload.dietitianUserId && item.patientUserId === action.payload.patientUserId,
+      );
+      return {
+        ...state,
+        dietitianPatients: exists
+          ? state.dietitianPatients.map((item) =>
+              item.dietitianUserId === action.payload.dietitianUserId && item.patientUserId === action.payload.patientUserId ? action.payload : item,
+            )
+          : [...state.dietitianPatients, action.payload],
+      };
+    }
+    case "UPSERT_DIETITIAN_NOTE": {
+      const exists = state.dietitianNotes.some((note) => note.id === action.payload.id);
+      return {
+        ...state,
+        dietitianNotes: exists ? state.dietitianNotes.map((note) => (note.id === action.payload.id ? action.payload : note)) : [action.payload, ...state.dietitianNotes],
+      };
+    }
+    case "DELETE_DIETITIAN_NOTE":
+      return { ...state, dietitianNotes: state.dietitianNotes.filter((note) => note.id !== action.payload) };
+    case "UPSERT_MEAL_PLAN": {
+      const exists = state.mealPlans.some((plan) => plan.id === action.payload.plan.id);
+      const otherItems = state.mealPlanItems.filter((item) => item.mealPlanId !== action.payload.plan.id);
+      return {
+        ...state,
+        mealPlans: exists ? state.mealPlans.map((plan) => (plan.id === action.payload.plan.id ? action.payload.plan : plan)) : [action.payload.plan, ...state.mealPlans],
+        mealPlanItems: [...otherItems, ...action.payload.items],
+      };
+    }
+    case "UPSERT_WEEKLY_CHECKIN": {
+      const exists = state.weeklyCheckins.some((checkin) => checkin.id === action.payload.id);
+      return {
+        ...state,
+        weeklyCheckins: exists
+          ? state.weeklyCheckins.map((checkin) => (checkin.id === action.payload.id ? action.payload : checkin))
+          : [action.payload, ...state.weeklyCheckins],
+      };
+    }
     case "ADD_TASK":
       return { ...state, tasks: [{ ...action.payload, id: action.payload.id || createId("task") }, ...state.tasks] };
     case "UPDATE_TASK":
@@ -168,14 +208,29 @@ const loadInitialState = (): AppState => {
   if (!stored) return seedState;
   try {
     const parsed = JSON.parse(stored);
+    const users = (parsed.users ?? []).map((user: any) => ({
+      ...user,
+      fullName: user.fullName ?? user.username,
+      role: user.role ?? "user",
+    }));
+    const healthProfiles = (parsed.healthProfiles ?? []).map((profile: any) => ({
+      ...profile,
+      fullName: profile.fullName ?? profile.username,
+      role: profile.role ?? "user",
+    }));
     return {
       ...seedState,
       ...parsed,
       profile: { ...seedState.profile, ...parsed.profile },
-      users: parsed.users ?? [],
+      users,
       currentUserId: parsed.currentUserId ?? null,
-      healthProfiles: parsed.healthProfiles ?? [],
+      healthProfiles,
       dailyLogs: parsed.dailyLogs ?? [],
+      dietitianPatients: parsed.dietitianPatients ?? [],
+      dietitianNotes: parsed.dietitianNotes ?? [],
+      mealPlans: parsed.mealPlans ?? [],
+      mealPlanItems: parsed.mealPlanItems ?? [],
+      weeklyCheckins: parsed.weeklyCheckins ?? [],
     };
   } catch {
     return seedState;

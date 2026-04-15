@@ -15,7 +15,7 @@ export const Onboarding = () => {
   if (!currentUser) return <Navigate to="/login" replace />;
 
   const existingProfile = getUserHealthProfile(state.healthProfiles, currentUser.id);
-  const profile = existingProfile ?? createEmptyHealthProfile(currentUser.id, currentUser.username, currentUser.email);
+  const profile = existingProfile ?? createEmptyHealthProfile(currentUser.id, currentUser.username, currentUser.email, currentUser.fullName);
   const todayLog = getDailyLog(state.dailyLogs, currentUser.id, todayIso()) ?? emptyDailyLog(currentUser.id);
 
   return (
