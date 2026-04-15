@@ -73,6 +73,7 @@ export interface DayNote {
 export interface UserProfile {
   name: string;
   email: string;
+  username: string;
   calorieTarget: number;
   waterTarget: number;
   stepTarget: number;
@@ -80,9 +81,20 @@ export interface UserProfile {
   darkMode: boolean;
 }
 
+export interface AuthUser {
+  id: string;
+  username: string;
+  email: string;
+  passwordHash: string;
+  passwordSalt: string;
+  createdAt: string;
+}
+
 export interface AppState {
   isAuthenticated: boolean;
+  currentUserId: string | null;
   profile: UserProfile;
+  users: AuthUser[];
   tasks: Task[];
   goals: Goal[];
   meals: Meal[];
@@ -92,7 +104,8 @@ export interface AppState {
 }
 
 export type AppAction =
-  | { type: "LOGIN"; payload: Pick<UserProfile, "name" | "email"> }
+  | { type: "REGISTER_USER"; payload: AuthUser }
+  | { type: "LOGIN_USER"; payload: AuthUser }
   | { type: "LOGOUT" }
   | { type: "UPDATE_PROFILE"; payload: Partial<UserProfile> }
   | { type: "ADD_TASK"; payload: Task }

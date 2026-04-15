@@ -7,6 +7,7 @@ export const seedState: AppState = {
   isAuthenticated: false,
   profile: {
     name: "Demo Kullanıcı",
+    username: "demo",
     email: "demo@lifetrack.app",
     calorieTarget: 2200,
     waterTarget: 2.5,
@@ -14,6 +15,8 @@ export const seedState: AppState = {
     sleepTarget: 7.5,
     darkMode: false,
   },
+  currentUserId: null,
+  users: [],
   tasks: [
     {
       id: "task-1",

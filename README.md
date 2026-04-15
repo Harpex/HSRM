@@ -15,6 +15,26 @@ npm run dev
 npm run build
 ```
 
+## Alpha auth
+
+Uygulamada gecici "Giris / kayit" akisi kaldirildi. Yerine iki secenek var:
+
+- Oturum Ac
+- Hesap Olustur
+
+Alpha surum GitHub Pages uzerinde statik calistigi icin hesaplar localStorage icinde saklanir. Sifreler duz metin olarak tutulmaz; tarayicinin Web Crypto API'si ile salt kullanilarak hashlenir.
+
+Saklanan hesap alani:
+
+- `id`
+- `username`
+- `email`
+- `passwordHash`
+- `passwordSalt`
+- `createdAt`
+
+Not: Bu yapi alpha/demo icindir. Production icin Supabase Auth veya backend tarafli auth kullanilmalidir. Supabase profil tablo semasi `docs/supabase-auth-schema.sql` dosyasindadir.
+
 ## GitHub Pages alpha yayin
 
 1. GitHub'da yeni bir repo olustur.

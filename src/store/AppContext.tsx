@@ -22,10 +22,33 @@ const recalculateStreak = (habit: Habit) => {
 
 const reducer = (state: AppState, action: AppAction): AppState => {
   switch (action.type) {
-    case "LOGIN":
-      return { ...state, isAuthenticated: true, profile: { ...state.profile, ...action.payload } };
+    case "REGISTER_USER":
+      return {
+        ...state,
+        users: [...state.users, action.payload],
+        isAuthenticated: true,
+        currentUserId: action.payload.id,
+        profile: {
+          ...state.profile,
+          name: action.payload.username,
+          username: action.payload.username,
+          email: action.payload.email,
+        },
+      };
+    case "LOGIN_USER":
+      return {
+        ...state,
+        isAuthenticated: true,
+        currentUserId: action.payload.id,
+        profile: {
+          ...state.profile,
+          name: action.payload.username,
+          username: action.payload.username,
+          email: action.payload.email,
+        },
+      };
     case "LOGOUT":
-      return { ...state, isAuthenticated: false };
+      return { ...state, isAuthenticated: false, currentUserId: null };
     case "UPDATE_PROFILE":
       return { ...state, profile: { ...state.profile, ...action.payload } };
     case "ADD_TASK":
@@ -84,7 +107,14 @@ const loadInitialState = (): AppState => {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (!stored) return seedState;
   try {
-    return { ...seedState, ...JSON.parse(stored) };
+    const parsed = JSON.parse(stored);
+    return {
+      ...seedState,
+      ...parsed,
+      profile: { ...seedState.profile, ...parsed.profile },
+      users: parsed.users ?? [],
+      currentUserId: parsed.currentUserId ?? null,
+    };
   } catch {
     return seedState;
   }

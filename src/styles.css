@@ -115,6 +115,56 @@ a {
   padding: 32px;
 }
 
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-strong);
+}
+
+.auth-tabs button {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  align-items: center;
+  min-height: 44px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 850;
+}
+
+.auth-tabs button.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 8px 22px rgba(29, 45, 41, 0.08);
+}
+
+.auth-form {
+  display: grid;
+  gap: 16px;
+}
+
+.auth-form h2 {
+  margin: 0 0 6px;
+}
+
+.auth-form p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.auth-note {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--surface-strong);
+  font-size: 0.88rem;
+}
+
 .app-shell {
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -361,6 +411,11 @@ textarea {
   padding: 11px 12px;
 }
 
+input:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
 textarea {
   min-height: 108px;
   resize: vertical;
@@ -425,6 +480,12 @@ textarea {
 .form-error {
   margin: 0;
   color: var(--coral);
+  font-weight: 800;
+}
+
+.form-success {
+  margin: 0;
+  color: var(--green);
   font-weight: 800;
 }
 
@@ -641,6 +702,10 @@ textarea {
   }
 
   .goal-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-tabs {
     grid-template-columns: 1fr;
   }
 }
