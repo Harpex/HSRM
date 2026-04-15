@@ -70,22 +70,35 @@ export const Login = () => {
       </section>
 
       <section className="auth-card">
+        <div className="role-tabs" aria-label="Rol seçimi">
+          <button className={role === "user" ? "active" : ""} onClick={() => setRole("user")} type="button">
+            Normal Kullanıcı
+          </button>
+          <button className={role === "dietitian" ? "active" : ""} onClick={() => setRole("dietitian")} type="button">
+            Diyetisyen
+          </button>
+        </div>
+
         <div className="auth-tabs" role="tablist" aria-label="Kimlik doğrulama seçenekleri">
           <button className={mode === "login" ? "active" : ""} onClick={() => switchMode("login")} type="button">
             <LockKeyhole size={17} />
-            Oturum Aç
+            {role === "dietitian" ? "Diyetisyen Girişi" : "Oturum Aç"}
           </button>
           <button className={mode === "register" ? "active" : ""} onClick={() => switchMode("register")} type="button">
             <UserPlus size={17} />
-            Hesap Oluştur
+            {role === "dietitian" ? "Diyetisyen Hesabı Oluştur" : "Hesap Oluştur"}
           </button>
         </div>
 
         {mode === "login" ? (
           <form className="auth-form" onSubmit={submitLogin}>
             <div>
-              <h2>Oturum Aç</h2>
-              <p>Kayıtlı e-posta adresin veya kullanıcı adınla devam et.</p>
+              <h2>{role === "dietitian" ? "Diyetisyen Girişi" : "Oturum Aç"}</h2>
+              <p>
+                {role === "dietitian"
+                  ? "Diyetisyen hesabınla danışan paneline geç."
+                  : "Kayıtlı e-posta adresin veya kullanıcı adınla devam et."}
+              </p>
             </div>
             <label>
               E-posta veya Kullanıcı Adı
@@ -114,8 +127,12 @@ export const Login = () => {
         ) : (
           <form className="auth-form" onSubmit={submitRegister}>
             <div>
-              <h2>Hesap Oluştur</h2>
-              <p>Benzersiz kullanıcı adı ve e-posta ile kalıcı alpha hesabı oluştur.</p>
+              <h2>{role === "dietitian" ? "Diyetisyen Hesabı Oluştur" : "Hesap Oluştur"}</h2>
+              <p>
+                {role === "dietitian"
+                  ? "Danışanlarını takip etmek için diyetisyen hesabı oluştur."
+                  : "Benzersiz kullanıcı adı ve e-posta ile kalıcı alpha hesabı oluştur."}
+              </p>
             </div>
             <label>
               Kullanıcı Adı
@@ -134,13 +151,6 @@ export const Login = () => {
                 onChange={(event) => setFullName(event.target.value)}
                 placeholder="Adın ve soyadın"
               />
-            </label>
-            <label>
-              Hesap türü
-              <select value={role} onChange={(event) => setRole(event.target.value as "user" | "dietitian")}>
-                <option value="user">Normal Kullanıcı</option>
-                <option value="dietitian">Diyetisyen</option>
-              </select>
             </label>
             <label>
               E-posta

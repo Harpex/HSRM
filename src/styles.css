@@ -120,7 +120,8 @@ a {
   padding: 32px;
 }
 
-.auth-tabs {
+.auth-tabs,
+.role-tabs {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
@@ -130,7 +131,8 @@ a {
   background: var(--surface-strong);
 }
 
-.auth-tabs button {
+.auth-tabs button,
+.role-tabs button {
   display: flex;
   justify-content: center;
   gap: 8px;
@@ -143,10 +145,15 @@ a {
   font-weight: 850;
 }
 
-.auth-tabs button.active {
+.auth-tabs button.active,
+.role-tabs button.active {
   background: var(--surface);
   color: var(--text);
   box-shadow: 0 8px 22px rgba(29, 45, 41, 0.08);
+}
+
+.role-tabs {
+  background: rgba(14, 159, 143, 0.1);
 }
 
 .auth-form {
