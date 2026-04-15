@@ -80,7 +80,7 @@ Supabase migration dosyasi su tablolari ve RLS policy'lerini icerir:
 
 ## Admin paneli
 
-Admin rolu kayit ekraninda gosterilmez. Alpha surumde ilk admin hesabi icin tarayici localStorage verisindeki ilgili kullanicinin `role` alani `admin` yapilir. Production surumde admin yetkisi sadece Supabase SQL editor veya guvenli backend tarafindan verilmelidir.
+Admin rolu kayit ekraninda gosterilmez. Alpha surumde gizli admin girisi vardir; belirlenen admin kullanici adi ve sifresiyle oturum acildiginda `/admin` paneline yonlenir. Production surumde admin yetkisi sadece Supabase SQL editor veya guvenli backend tarafindan verilmelidir.
 
 Admin paneli:
 

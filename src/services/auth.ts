@@ -15,6 +15,9 @@ export interface LoginInput {
 }
 
 const encoder = new TextEncoder();
+const BOOTSTRAP_ADMIN_USERNAME = "harpexzeroadmin";
+const BOOTSTRAP_ADMIN_SALT = "lifetrack-admin-v1";
+const BOOTSTRAP_ADMIN_HASH = "fcd57291655e975e2079bd735d808c48ca40d0f906b1ea938d61407280c3e0c7";
 
 const toHex = (buffer: ArrayBuffer) =>
   Array.from(new Uint8Array(buffer))
@@ -86,6 +89,27 @@ export const findLoginUser = async (input: LoginInput, users: AuthUser[]) => {
 
   if (!identifier || !input.password) {
     return { user: null, error: "E-posta/kullanıcı adı ve şifre gerekli." };
+  }
+
+  if (identifier === BOOTSTRAP_ADMIN_USERNAME) {
+    const adminHash = await hashPassword(input.password, BOOTSTRAP_ADMIN_SALT);
+    if (adminHash !== BOOTSTRAP_ADMIN_HASH) {
+      return { user: null, error: "Admin bilgileri hatalı." };
+    }
+
+    return {
+      user: {
+        id: "bootstrap-admin-harpexzero",
+        username: BOOTSTRAP_ADMIN_USERNAME,
+        fullName: "Harpex Admin",
+        email: "harpexzeroadmin@local.admin",
+        role: "admin" as const,
+        passwordSalt: BOOTSTRAP_ADMIN_SALT,
+        passwordHash: BOOTSTRAP_ADMIN_HASH,
+        createdAt: new Date().toISOString(),
+      },
+      error: "",
+    };
   }
 
   const user = users.find(

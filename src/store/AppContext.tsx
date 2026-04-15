@@ -38,6 +38,7 @@ const reducer = (state: AppState, action: AppAction): AppState => {
     case "LOGIN_USER":
       return {
         ...state,
+        users: state.users.some((user) => user.id === action.payload.id) ? state.users : [...state.users, action.payload],
         isAuthenticated: true,
         currentUserId: action.payload.id,
         profile: {

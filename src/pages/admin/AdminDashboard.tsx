@@ -58,6 +58,20 @@ export const AdminDashboard = () => {
       </section>
       <section className="panel">
         <div className="section-title">
+          <h2>Sistem Detayları</h2>
+          <span>Yönetim özeti</span>
+        </div>
+        <div className="profile-summary-grid">
+          <span>Danışan bağlantısı <strong>{state.dietitianPatients.length}</strong></span>
+          <span>Diyetisyen notu <strong>{state.dietitianNotes.length}</strong></span>
+          <span>Beslenme planı <strong>{state.mealPlans.length}</strong></span>
+          <span>Plan maddesi <strong>{state.mealPlanItems.length}</strong></span>
+          <span>Haftalık kontrol <strong>{state.weeklyCheckins.length}</strong></span>
+          <span>Günlük takip kaydı <strong>{state.dailyLogs.length}</strong></span>
+        </div>
+      </section>
+      <section className="panel">
+        <div className="section-title">
           <h2>Güvenlik Notu</h2>
         </div>
         <p className="analysis-text">

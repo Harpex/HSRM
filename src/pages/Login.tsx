@@ -38,7 +38,7 @@ export const Login = () => {
     }
 
     dispatch({ type: "LOGIN_USER", payload: result.user });
-    navigate(result.user.role === "dietitian" ? "/dietitian" : "/dashboard");
+    navigate(result.user.role === "admin" ? "/admin" : result.user.role === "dietitian" ? "/dietitian" : "/dashboard");
   };
 
   const submitRegister = async (event: FormEvent) => {
