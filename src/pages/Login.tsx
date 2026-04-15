@@ -51,8 +51,8 @@ export const Login = () => {
 
     const user = await createUser({ username, email, password, passwordConfirm });
     dispatch({ type: "REGISTER_USER", payload: user });
-    setSuccess("Hesap oluşturuldu. Panele yönlendiriliyorsun.");
-    navigate("/dashboard");
+    setSuccess("Hesap oluşturuldu. Profil bilgilerine geçiyorsun.");
+    navigate("/onboarding");
   };
 
   return (

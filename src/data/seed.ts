@@ -17,6 +17,8 @@ export const seedState: AppState = {
   },
   currentUserId: null,
   users: [],
+  healthProfiles: [],
+  dailyLogs: [],
   tasks: [
     {
       id: "task-1",

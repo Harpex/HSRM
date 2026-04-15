@@ -33,7 +33,25 @@ Saklanan hesap alani:
 - `passwordSalt`
 - `createdAt`
 
-Not: Bu yapi alpha/demo icindir. Production icin Supabase Auth veya backend tarafli auth kullanilmalidir. Supabase profil tablo semasi `docs/supabase-auth-schema.sql` dosyasindadir.
+Not: Bu yapi alpha/demo icindir. Production icin Supabase Auth veya backend tarafli auth kullanilmalidir. Supabase profil ve gunluk takip semasi `docs/supabase-health-tracking-schema.sql` dosyasindadir.
+
+## Saglik profili ve gunluk takip
+
+Hesap olusturan kullanici once onboarding ekranina yonlenir. Bu akista:
+
+- Profil Bilgileri
+- Saglik bilgileri
+- Hedefler
+- Gunluk Takip baslangic verileri
+
+toplanir. Dashboard uzerinde BMI, BMI kategorisi, hedef kiloya kalan fark, su/adim/uyku ilerlemesi, tahmini kalori ihtiyaci ve ideal kilo araligi dinamik hesaplanir.
+
+Production Supabase entegrasyonu icin:
+
+1. Supabase projesinde Auth > Providers icinden e-posta girisini etkinlestir.
+2. SQL editor icinde `docs/supabase-health-tracking-schema.sql` dosyasini calistir.
+3. Frontend tarafinda local auth servisini Supabase `signUp`, `signInWithPassword`, `signOut` ve `onAuthStateChange` akisi ile degistir.
+4. `profiles` ve `daily_logs` sorgularinda `user_id = session.user.id` kullan.
 
 ## GitHub Pages alpha yayin
 

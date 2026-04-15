@@ -51,6 +51,66 @@ const reducer = (state: AppState, action: AppAction): AppState => {
       return { ...state, isAuthenticated: false, currentUserId: null };
     case "UPDATE_PROFILE":
       return { ...state, profile: { ...state.profile, ...action.payload } };
+    case "UPSERT_HEALTH_PROFILE": {
+      const exists = state.healthProfiles.some((profile) => profile.userId === action.payload.userId);
+      return {
+        ...state,
+        healthProfiles: exists
+          ? state.healthProfiles.map((profile) => (profile.userId === action.payload.userId ? action.payload : profile))
+          : [...state.healthProfiles, action.payload],
+        profile: {
+          ...state.profile,
+          username: action.payload.username,
+          name: action.payload.username,
+          email: action.payload.email,
+          calorieTarget: action.payload.dailyCalorieGoal || state.profile.calorieTarget,
+          waterTarget: action.payload.dailyWaterGoalMl / 1000,
+          stepTarget: action.payload.dailyStepGoal,
+          sleepTarget: action.payload.sleepGoalHours,
+        },
+      };
+    }
+    case "UPSERT_DAILY_LOG": {
+      const exists = state.dailyLogs.some((log) => log.userId === action.payload.userId && log.date === action.payload.date);
+      return {
+        ...state,
+        dailyLogs: exists
+          ? state.dailyLogs.map((log) => (log.userId === action.payload.userId && log.date === action.payload.date ? action.payload : log))
+          : [...state.dailyLogs, action.payload],
+      };
+    }
+    case "ADD_WATER": {
+      const now = new Date().toISOString();
+      const current = state.dailyLogs.find((log) => log.userId === action.payload.userId && log.date === action.payload.date);
+      const nextLog = current
+        ? { ...current, waterIntakeMl: Math.max(0, current.waterIntakeMl + action.payload.amountMl), updatedAt: now }
+        : {
+            id: createId("daily-log"),
+            userId: action.payload.userId,
+            date: action.payload.date,
+            waterIntakeMl: Math.max(0, action.payload.amountMl),
+            stepsCount: 0,
+            sleepHours: 0,
+            createdAt: now,
+            updatedAt: now,
+          };
+      return reducer(state, { type: "UPSERT_DAILY_LOG", payload: nextLog });
+    }
+    case "UPDATE_WEIGHT": {
+      const profile = state.healthProfiles.find((item) => item.userId === action.payload.userId);
+      const nextState = profile
+        ? reducer(state, {
+            type: "UPSERT_HEALTH_PROFILE",
+            payload: { ...profile, weightKg: action.payload.weightKg, updatedAt: new Date().toISOString() },
+          })
+        : state;
+      const current = nextState.dailyLogs.find((log) => log.userId === action.payload.userId && log.date === action.payload.date);
+      if (!current) return nextState;
+      return reducer(nextState, {
+        type: "UPSERT_DAILY_LOG",
+        payload: { ...current, weightKgSnapshot: action.payload.weightKg, updatedAt: new Date().toISOString() },
+      });
+    }
     case "ADD_TASK":
       return { ...state, tasks: [{ ...action.payload, id: action.payload.id || createId("task") }, ...state.tasks] };
     case "UPDATE_TASK":
@@ -114,6 +174,8 @@ const loadInitialState = (): AppState => {
       profile: { ...seedState.profile, ...parsed.profile },
       users: parsed.users ?? [],
       currentUserId: parsed.currentUserId ?? null,
+      healthProfiles: parsed.healthProfiles ?? [],
+      dailyLogs: parsed.dailyLogs ?? [],
     };
   } catch {
     return seedState;

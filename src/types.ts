@@ -3,6 +3,8 @@ export type Priority = "low" | "medium" | "high";
 export type GoalStatus = "active" | "completed" | "paused";
 export type MealCategory = "breakfast" | "lunch" | "dinner" | "snack";
 export type Mood = "dusuk" | "dengeli" | "iyi" | "harika";
+export type ActivityLevel = "cok_dusuk" | "dusuk" | "orta" | "yuksek" | "cok_yuksek";
+export type Gender = "kadin" | "erkek" | "belirtmek_istemiyorum" | "";
 
 export interface Task {
   id: string;
@@ -90,11 +92,48 @@ export interface AuthUser {
   createdAt: string;
 }
 
+export interface UserHealthProfile {
+  id: string;
+  userId: string;
+  username: string;
+  email: string;
+  age: number;
+  gender: Gender;
+  heightCm: number;
+  weightKg: number;
+  targetWeightKg: number;
+  activityLevel: ActivityLevel;
+  dailyWaterGoalMl: number;
+  dailyStepGoal: number;
+  dailyCalorieGoal?: number;
+  sleepGoalHours: number;
+  notes: string;
+  goalDescription: string;
+  onboardingCompleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DailyLog {
+  id: string;
+  userId: string;
+  date: string;
+  waterIntakeMl: number;
+  stepsCount: number;
+  sleepHours: number;
+  calorieIntake?: number;
+  weightKgSnapshot?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AppState {
   isAuthenticated: boolean;
   currentUserId: string | null;
   profile: UserProfile;
   users: AuthUser[];
+  healthProfiles: UserHealthProfile[];
+  dailyLogs: DailyLog[];
   tasks: Task[];
   goals: Goal[];
   meals: Meal[];
@@ -108,6 +147,10 @@ export type AppAction =
   | { type: "LOGIN_USER"; payload: AuthUser }
   | { type: "LOGOUT" }
   | { type: "UPDATE_PROFILE"; payload: Partial<UserProfile> }
+  | { type: "UPSERT_HEALTH_PROFILE"; payload: UserHealthProfile }
+  | { type: "UPSERT_DAILY_LOG"; payload: DailyLog }
+  | { type: "ADD_WATER"; payload: { userId: string; date: string; amountMl: number } }
+  | { type: "UPDATE_WEIGHT"; payload: { userId: string; weightKg: number; date: string } }
   | { type: "ADD_TASK"; payload: Task }
   | { type: "UPDATE_TASK"; payload: Task }
   | { type: "DELETE_TASK"; payload: string }
